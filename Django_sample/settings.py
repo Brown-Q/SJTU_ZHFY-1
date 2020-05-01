@@ -120,7 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR,"static"),)
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 # print(STATICFILES_DIRS,STATIC_URL)
+from mongoengine import *
 from mongoengine import connect
-connect('MS_data', host='127.0.0.1', port=27017)
+disconnect()
+connect('MS_data', host='202.121.180.66', port=7101)

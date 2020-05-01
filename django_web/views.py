@@ -2,17 +2,18 @@ from django.shortcuts import render
 from django_web.models import *
 from django_web.xs_wxjs_data import *
 from django_web.xs_dqz_data import *
+from django_web.xs_dpz_data import *
 from django_web.ms_lhjf_data import *
+from django_web.ms_jdjf_data import *
+from django_web.ms_ldhtjf_data import *
+from django_web.ms_cpzrjf_data import *
+from django_web.ms_jcjf_data import *
 from django_web.sjayc_data import *
 from django_web.tsyp_data import *
 from django_web.overview import *
-from django_web.ms_data import *
-from django_web.xs_data import *
-from django_web.xz_data import *
 # Create your views here.
 def index(request):
     return render(request,'index.html')
-
 
 def overview(request):
 
@@ -29,8 +30,7 @@ def chart1(request):
         'MSCASE': mscase,
         'CASE_CATE': '民事'
     }
-
-    return render(request, 'home/chart1.html', context)
+    return render(request,'home/chart1.html',context)
 def chart2(request):
     context = {
         'CASE_INFO': xscase_info,
@@ -66,15 +66,54 @@ def dqz(request):
     }
     return render(request, 'XS_topic/DQZ.html',context)
 
+def dpz(request):
+    context = {
+        'AY_INFO': xsay_info,
+        'F_chart_data': F_chart_dpz_data,
+        'S_chart_data': S_chart_dpz_data,
+        'T_chart_data': T_chart_dpz_data,
+    }
+    return render(request, 'XS_topic/DPZ.html',context)
+
 def lhjf(request):
     context={
-        'person_info': person_info,
+        'person_info': person_info_lhjf,
         'msay_info': msay_info,
-        'overview_data':overview_data,
+        'overview_data':overview_data_lhjf,
     }
-
-
     return render(request, 'MS_topic/LHJF.html',context)
+
+def jdjf(request):
+    context={
+        'person_info': person_info_jdjf,
+        'msay_info': msay_info,
+        'overview_data':overview_data_jdjf,
+    }
+    return render(request, 'MS_topic/JDJF.html',context)
+
+def ldhtjf(request):
+    context={
+        'person_info': person_info_ldhtjf,
+        'msay_info': msay_info,
+        'overview_data':overview_data_ldhtjf,
+    }
+    return render(request, 'MS_topic/LDHTJF.html',context)
+
+def cpzrjf(request):
+    context={
+        'person_info': person_info_cpzrjf,
+        'msay_info': msay_info,
+        'overview_data':overview_data_cpzrjf,
+    }
+    return render(request, 'MS_topic/CPZRJF.html',context)
+
+def jcjf(request):
+    context={
+        'person_info': person_info_jcjf,
+        'msay_info': msay_info,
+        'overview_data':overview_data_jcjf,
+    }
+    return render(request, 'MS_topic/JCJF.html',context)
 
 def sjayc(request):
     context = {
@@ -209,5 +248,6 @@ def get_detail_page(request,case_id_cate):
 
                   }
                   )
+
 
 

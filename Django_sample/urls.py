@@ -26,9 +26,14 @@ urlpatterns = [
     path('xzchart/', chart3),
     path('wxjsz/', wxjsz),
     path('dqz/', dqz),
+    path('dpz/', dpz),
     path('lhjf/', lhjf),
+    path('jdjf/', jdjf),
+    path('ldhtjf/', ldhtjf),
+    path('cpzrjf/', cpzrjf),
+    path('jcjf/', jcjf),
     path('sjayc/', sjayc),
-    path('tsyp/', tsyp),
-    path('detail/<str:case_id_cate>', get_detail_page),
+    path('tsyp/',tsyp),
+    path('detail/<str:case_id_cate>',get_detail_page),
     # path('detail/<str:mscase_id_cate>', get_msdetail_page)
 ]

@@ -13,7 +13,7 @@ class ChartData:
         ja_number = []
         region = []
         for i in range(1, 10):
-            url = 'C:\\Users\\WSK\\PycharmProjects\\Django\\data\\sjayc\\df0' + str(i) + '.xlsx'
+            url = 'D:\\Django\\data\\sjayc\\df0' + str(i) + '.xlsx'
             excel = xlrd.open_workbook(url)
             sheet = excel.sheet_by_name('Sheet1')
             sa_data = sheet.col_values(3, 1)
@@ -23,7 +23,7 @@ class ChartData:
             sa_number.append(sa_data)
             ja_number.append(ja_data)
         for i in range(10, 41):
-            url = 'C:\\Users\\WSK\\PycharmProjects\\Django\\data\\sjayc\\df' + str(i) + '.xlsx'
+            url = 'D:\\Django\\data\\sjayc\\df' + str(i) + '.xlsx'
             excel = xlrd.open_workbook(url)
             sheet = excel.sheet_by_name('Sheet1')
             sa_data = sheet.col_values(3, 1)

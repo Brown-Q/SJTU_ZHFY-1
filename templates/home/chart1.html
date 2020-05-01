@@ -106,7 +106,6 @@
 
 <script>
     function jump(url){
-
         window.open(url);
     }
     $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', function(mapdata) {
@@ -195,7 +194,7 @@ name: '重庆市地图'
                 }]
                 })
 }
-    his_chart('chart4', {{ CASE_INFO.region_case_number | safe }});
+    his_chart('chart4', {{ CASE_INFO.region_case_number | safe }})
     function line_chart(chart_name, chart_data) {
     var chart = Highcharts.chart(chart_name, {
         title: {
@@ -248,7 +247,7 @@ name: '重庆市地图'
         }
         });
     }
-    line_chart('chart5', {{ CASE_INFO.date_case_number | safe}});
+    line_chart('chart5', {{ CASE_INFO.date_case_number | safe}})
     function bubble_chart(chart_name, chart_data){
         Highcharts.chart(chart_name, {
                 chart: {
@@ -296,7 +295,7 @@ name: '重庆市地图'
                 series: chart_data,
                 });
     }
-    bubble_chart('chart2', {{ AY_INFO |safe }});
+    bubble_chart('chart2', {{ AY_INFO |safe }})
 
 </script>
 

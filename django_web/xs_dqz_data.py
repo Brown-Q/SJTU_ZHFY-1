@@ -1,7 +1,30 @@
-#coding: utf-8
-from django_web.models import XSAJ
-import re
+#coding:utf-8
 from mongoengine import *
+# Create your models here.
+from mongoengine import connect
+import re
+from numpy import *
+disconnect()
+connect('court', host='202.121.180.66', port=7101)
+
+
+class XSAJ(Document):
+    年份 = StringField()
+    日期 = StringField()
+    省份 = StringField()
+    法院名称 = StringField()
+    案件类别 = StringField()
+    案件数据 = StringField()
+    头部信息 = StringField()
+    当事人信息 = StringField()
+    庭审过程 = StringField()
+    尾部信息 = StringField()
+    案由= StringField()
+
+    meta = {
+        'collection':'QY2','strict': False
+    }
+
 
 
 class XsDqaData:
@@ -16,6 +39,7 @@ class XsDqaData:
             '百': 100,
             '佰': 100,
             '千': 1000,
+            '仠': 1000,
             '仟': 1000,
             '万': 10000,
             '萬': 10000,
@@ -29,8 +53,8 @@ class XsDqaData:
     def get_defendant_info(self, AY_str):
         d = []
         # print(str)
-        for i in XSAJ.objects(Q(案由=AY_str,文书类型='判决书')):
-            a = i.当事人.split('、')
+        for i in XSAJ.objects(Q(案由=AY_str)):
+            a = i.当事人信息.split('、')
             # print(a)
             for j in a:
                 if ('被告人' in j or '罪犯' in j or '被告' in j)and('男，' in j or '女，' in j):
@@ -107,7 +131,7 @@ class XsDqaData:
     def prison_date(self, AY_str):
         prison = []
         for i in XSAJ.objects(Q(案由=AY_str)):
-            for j in i.判决结果.split('、'):
+            for j in i.庭审过程.split('、'):
                 if '被告人' in j:
                     for k in re.split('[,，；]', j):
                         if '判处' in k:
@@ -126,39 +150,45 @@ class XsDqaData:
                                 elif '无期徒' in date1:
                                     date = '无期徒刑'
                             if len(date)<=10 and date and ('�' not in date) and ('的' not in date) and ('被告人' not in date):
-                                # print(date)
-                                prison.append(date)
+                                if date.startswith('拘') or date.startswith('有'):
+                                    # print(date)
+                                    prison.append(date)
         return prison
 
     def money_AJ(self, AY_str):
         money = []
         for i in XSAJ.objects(Q(案由=AY_str)):
-            for j in i.判决结果.split('、'):
+            for j in i.庭审过程.split('、'):
                 if '被告人' in j:
-                    for k in re.split('[,，；]',j):
+                    for k in re.split('[,，；]', j):
                         # print(k)
                         if '罚金' in k and '�' not in k:
                             # print(k)
-                            if re.findall(r'罚金(.*?)元',k):
+                            if re.findall(r'罚金(.*?)元', k):
                                 # print(str(re.findall(r'罚金(.*?)元',k)[0]).replace('人民币',''))
                                 str1 = str(re.findall(r'罚金(.*?)元', k)[0]).replace('人民币', '')
                                 str1 = str1.replace('人币', '')
-                                money.append(str1.replace('人民', ''))
-                            elif bool(re.findall(r'处罚金(.*?)。',k)):
+                                a = str1.replace('人民', '')
+                                if 0 < len(a) <= 6:
+                                    money.append(a)
+                            elif bool(re.findall(r'处罚金(.*?)。', k)):
                                 # print(str(re.findall(r'处罚金(.*?)。', k)[0]))
-                                money.append(str(re.findall(r'处罚金(.*?)。', k)[0]).replace('人民币', ''))
+                                a = str(re.findall(r'处罚金(.*?)。', k)[0]).replace('人民币', '')
+                                if 0 < len(a) <= 6:
+                                    money.append(a)
         # print(money)
+        money.remove('二千并罚')
+        # money.remove('限被告人赖')
+        # money.remove('限被告人赖')
         money_re = []
         for l in money:
-            # print(l)
             if l.isdigit():
-                # print()
                 money_re.append(int(l))
             elif not re.compile(u'[^\u4e00-\u9fa5]').search(l):
-                # print(l)
-                p = XsDqaData().chinese_to_arabic(l)
-                # print(p)
-                money_re.append(p)
+                if '在' not in l and '各' not in l and '限' not in l and '的' not in l:
+                    p = XsDqaData().chinese_to_arabic(l)
+                    # print(p)
+                    money_re.append(p)
         return money_re
 
     def get_case_sex_number(self, DQdefendant_info):
@@ -218,6 +248,38 @@ class XsDqaData:
         DQAGE.append(list(c.keys()))
         DQAGE.append(list(c.values()))
         return DQAGE
+
+    def get_defendant_job(self):
+        f = {'无业游民': 0, '工人': 0, '自营业主': 0, '教师': 0, '医生': 0, '农民': 0}
+        # print(str)
+        for i in XSAJ.objects(Q(案由='盗窃罪')):
+            a = i.当事人信息.split('、')
+            # print(a)
+            for j in a:
+                if ('被告人' in j or '被告' in j) and ('男，' in j or '女，' in j):
+                    c = {'edu': '未知'}
+                    # print(j)
+                    if ',' in j or '，' in j:
+                        e = j.split('，')
+                        b = []
+                        for i in e:
+                            for w in i.split(','):
+                                b.append(w)
+                        for k in b:
+                            if '无业' in k and len(k) < 6:
+                                f['无业游民'] += 1
+                            elif '工人' in k and len(k) < 6:
+                                f['工人'] += 1
+                            elif '公司' in k and len(k) < 6:
+                                f['自营业主'] += 1
+                            elif '教师' in k and len(k) < 6:
+                                f['教师'] += 1
+                            elif '医生' in k and len(k) < 6:
+                                f['医生'] += 1
+                            elif '农民' in k and len(k) < 6:
+                                f['农民'] += 1
+                                # break
+        return f
 
     def get_case_edu_number(self, DQdefendant_info):
         DQEDU = []
@@ -311,11 +373,11 @@ class XsDqaData:
 
     def get_court_pre_info(self):
         court = {}
-        for i in XSAJ.objects(Q(案由='盗窃罪', 文书类型='判决书')):
-            if i.法院 in list(court.keys()):
-                court[i.法院] += 1
+        for i in XSAJ.objects(Q(案由='盗窃罪')):
+            if i.法院名称 in list(court.keys()):
+                court[i.法院名称] += 1
             else:
-                court[i.法院] = 1
+                court[i.法院名称] = 1
         court_pre = sorted(court.items(), key=lambda k: k[1], reverse=True)
         return court_pre
 
@@ -325,21 +387,27 @@ class XsDqaData:
         # [('重庆市北碚区人民法院', 707), ('重庆市万州区人民法院', 664), ('重庆市渝中区人民法院', 646), ('重庆市涪陵区人民法院', 444), ('重庆市高级人民法院', 6)]
         court = {}
         for i in court_pre:
-            m = i[0].replace('人民法院', '')
+            m = i[0].replace('区', '')
             m = m.replace('重庆市', '')
+            m = m.replace('人民法院', '')
+            m = m.replace('自治县', '')
+            m = m.replace('市', '')
+            m = m.replace('苗族', '')
+            m = m.replace('土家族', '')
+            m = m.replace('中华人民共和国', '')
             # print(court)
             if m == '第一中级':
-                m = '渝北区'
+                m = '渝北'
             elif m == '第二中级':
-                m = '万州区'
+                m = '万州'
             elif m == '第三中级':
-                m = '涪陵区'
+                m = '涪陵'
             elif m == '第四中级':
-                m = '黔江区'
+                m = '黔江'
             elif m == '第五中级':
-                pass
+                m = '渝中'
             elif m == '高级':
-                m = '渝北区'
+                m = '渝北'
             for j in court.keys():
                 if m[:2] in j:
                     court[j] = court[j] + i[1]
@@ -351,11 +419,16 @@ class XsDqaData:
 
     def get_map_data(self, court_l_data):
         map_data = []
-        for i in court_l_data.keys():
-            map_meta_data = {}
-            map_meta_data['name'] = i
-            map_meta_data['value'] = court_l_data[i]
-            map_data.append(map_meta_data)
+        court_l_data.pop('重庆铁路运输法院')
+        for i,j in court_l_data.items():
+                NOname = {}
+                if i != '酉阳' and i != '秀山' and '县' not in i and len(i) < 5:
+                    NOname['name'] = i + '区'
+                else:
+                    NOname['name'] = i
+                NOname['value'] = j
+                # print(NOname)
+                map_data.append(NOname)
         return map_data
 
     def get_his_row_data(self, map_data):
@@ -365,31 +438,37 @@ class XsDqaData:
         for i in map_data:
             his_region_data.append(i['name'])
             his_number_data.append(i['value'])
-        his_row_data = [his_region_data, his_number_data]
+        his_row_data = [his_region_data[0:5], his_number_data[0:5]]
         return his_row_data
 
     def get_case_date_number(self):
         case_date_number = {
+            '2019': 0,
             '2018': 0,
             '2017': 0,
             '2016': 0
         }
-        for i in XSAJ.objects(Q(案由='盗窃罪', 文书类型='判决书')):
+        for i in XSAJ.objects(Q(案由='盗窃罪')):
             for j in i.尾部信息.split('、'):
                 if ('年' in j) and ('月' in j) and ('日' in j) and ('二' in j):
-                    if ('二○一八' in j) or ('二〇一八' in j):
+                    if ('二一九' in j) or ('二一九' in j):
+                        case_date_number['2019'] += 1
+                    if ('二一八' in j) or ('二一八' in j):
                         case_date_number['2018'] += 1
-                    elif ('二○一七' in j) or ('二〇一七' in j):
+                    elif ('二一七' in j) or ('二一七' in j):
                         case_date_number['2017'] += 1
-                    elif ('二○一六' in j) or ('二〇一六' in j):
+                    elif ('二一六' in j) or ('二一六' in j):
                         case_date_number['2016'] += 1
                     break
         return case_date_number
 
     def get_line_data(self):
         line_data_dict = {}
-        for i in XSAJ.objects(Q(案由='盗窃罪', 文书类型='判决书')):
-            date = str(i.案号.split('）')[0].replace('（', '')) + '年'
+        for i in XSAJ.objects(Q(案由='盗窃罪')):
+            a = i.头部信息.split('、')
+            for j in a:
+                if '（20' in j:
+                    date = str(j.split('）')[0].replace('（', '')) + '年'
             if (date not in line_data_dict.keys()) and (len(date) < 7):
                 line_data_dict[date] = 1
             elif date in line_data_dict.keys():
@@ -408,7 +487,7 @@ class ChartRegion:
 
     def get_Fchart_data(self):
         DQpnumber = len(self.defendant_info)
-        DQcasenum = XSAJ.objects(Q(案由='盗窃罪', 文书类型='判决书')).count()
+        DQcasenum = XSAJ.objects(Q(案由='盗窃罪')).count()
         court_data = XsDqaData().get_court_info()
         map_data = XsDqaData().get_map_data(court_data)
         his_row_data = XsDqaData().get_his_row_data(map_data)
@@ -426,7 +505,7 @@ class ChartRegion:
         DQsex = XsDqaData().get_case_sex_number(self.defendant_info)
         DQage = XsDqaData().get_case_age_number(self.defendant_info)
         DQedu = XsDqaData().get_case_edu_number(self.defendant_info)
-        DQjob = [['无业游民', '工人', '自营业主', '教师', '医生', '农民'], [420, 330, 340, 390, 520, 750]]
+        DQjob = [['无业游民', '工人', '自营业主', '教师', '医生', '农民'], [2211, 33, 13, 0, 0, 820]]
         Schart_data = {
             'DQSEX': DQsex,  # 当事人性别信息
             'DQJOB': DQjob,# 职业分布
@@ -447,16 +526,22 @@ class ChartRegion:
         return Tchart_data
 
 
-
-DQdefendant_info = XsDqaData().get_defendant_info('盗窃罪')
-
-F_chart_dqz_data = ChartRegion(DQdefendant_info).get_Fchart_data()
-
-S_chart_dqz_data = ChartRegion(DQdefendant_info).get_Schart_data()
-# print(S_chart_data)
-
-T_chart_dqz_data = ChartRegion(DQdefendant_info).get_Tchart_data()
-
+#
+# f=XsDqaData().get_defendant_job()
+# job=list(f.keys())
+# job_number=list(f.values())
+# job_all=[job,job_number]
+# print(job_all)
+# DQdefendant_info = XsDqaData().get_defendant_info('盗窃罪')
+# F_chart_dqz_data = ChartRegion(DQdefendant_info).get_Fchart_data()
+# S_chart_dqz_data = ChartRegion(DQdefendant_info).get_Schart_data()
+# T_chart_dqz_data = ChartRegion(DQdefendant_info).get_Tchart_data()
+# print(F_chart_dqz_data)
+# print(S_chart_dqz_data)
+# print(T_chart_dqz_data)
+F_chart_dqz_data ={'DQpnumber': 6244, 'DQcasenum': 6380, 'map_data': [{'name': '沙坪坝区', 'value': 474}, {'name': '南岸区', 'value': 464}, {'name': '渝中区', 'value': 790}, {'name': '九龙坡区', 'value': 441}, {'name': '渝北区', 'value': 545}, {'name': '涪陵区', 'value': 389}, {'name': '江津区', 'value': 233}, {'name': '合川区', 'value': 217}, {'name': '万州区', 'value': 222}, {'name': '江北区', 'value': 211}, {'name': '北碚区', 'value': 193}, {'name': '永川区', 'value': 189}, {'name': '荣昌县', 'value': 156}, {'name': '綦江区', 'value': 152}, {'name': '长寿区', 'value': 136}, {'name': '大足区', 'value': 130}, {'name': '璧山区', 'value': 129}, {'name': '巴南区', 'value': 120}, {'name': '潼南县', 'value': 109}, {'name': '奉节县', 'value': 100}, {'name': '开州区', 'value': 100}, {'name': '云阳县', 'value': 85}, {'name': '梁平区', 'value': 82}, {'name': '南川区', 'value': 82}, {'name': '垫江县', 'value': 81}, {'name': '丰都县', 'value': 75}, {'name': '秀山', 'value': 56}, {'name': '忠县', 'value': 55}, {'name': '大渡口区', 'value': 51}, {'name': '石柱区', 'value': 45}, {'name': '巫山县', 'value': 40}, {'name': '铜梁县', 'value': 38}, {'name': '彭水区', 'value': 36}, {'name': '黔江区', 'value': 40}, {'name': '酉阳', 'value': 33}, {'name': '巫溪县', 'value': 28}, {'name': '城口县', 'value': 16}, {'name': '武隆区', 'value': 12}], 'his_row_data': [['沙坪坝区', '南岸区', '渝中区', '九龙坡区', '渝北区'], [474, 464, 790, 441, 545]], 'line_data': [['2016年', '2017年', '2018年'], [100, 1373, 4898]]}
+S_chart_dqz_data ={'DQSEX': [{'name': '男', 'y': 5842}, {'name': '女', 'y': 309}, {'name': '未知', 'y': 93}], 'DQJOB': [['无业游民', '工人', '自营业主', '教师', '医生', '农民'], [2211, 33, 13, 0, 0, 820]], 'DQEDU': [{'name': '未知', 'y': 2441}, {'name': '文盲', 'y': 318}, {'name': '小学文化', 'y': 1334}, {'name': '中学文化', 'y': 1657}, {'name': '高中文化', 'y': 406}, {'name': '大专文化', 'y': 61}, {'name': '本科文化', 'y': 22}, {'name': '研究生文化', 'y': 0}], 'DQAGE': [['未知', '20岁以下', '21岁~30岁', '31岁~40岁', '41岁~50岁', '51岁~60岁', '60岁以上'], [686, 128, 1727, 1412, 1390, 704, 197]]}
+T_chart_dqz_data ={'DQsentence': [{'name': '有期徒刑十三年六个月', 'y': 12}, {'name': '拘役六个月', 'y': 207}, {'name': '有期徒刑八个月', 'y': 1139}, {'name': '有期徒刑十一年六个月', 'y': 9}, {'name': '有期徒刑十个月', 'y': 594}, {'name': '拘役四个月', 'y': 1149}, {'name': '拘役五个月', 'y': 859}, {'name': '拘役三个月', 'y': 871}, {'name': '有期徒刑三年', 'y': 122}, {'name': '有期徒刑六个月', 'y': 1904}, {'name': '有期徒刑一年二个月', 'y': 152}, {'name': '有期徒刑十一年', 'y': 34}, {'name': '有期徒刑四年六个月', 'y': 51}, {'name': '有期徒刑七年', 'y': 26}, {'name': '有期徒刑十二年六个月', 'y': 16}, {'name': '有期徒刑七个月', 'y': 1467}, {'name': '有期徒刑二年', 'y': 91}, {'name': '有期徒刑一年七个月', 'y': 20}, {'name': '有期徒刑十三年', 'y': 26}, {'name': '有期徒刑十年', 'y': 47}, {'name': '有期徒刑十一年八个月', 'y': 2}, {'name': '有期徒九年四个月', 'y': 1}, {'name': '有期徒刑五年', 'y': 53}, {'name': '有期徒刑十年三个月', 'y': 3}, {'name': '有期徒刑三年十个月', 'y': 18}, {'name': '有期徒刑九个月', 'y': 570}, {'name': '有期徒刑十年六个月', 'y': 26}, {'name': '拘投五个月', 'y': 1}, {'name': '有期徒刑一年八个月', 'y': 48}, {'name': '有期徒刑三年四个月', 'y': 15}, {'name': '有期徒刑十一年四个月', 'y': 2}, {'name': '有期徒刑十年八个月', 'y': 2}, {'name': '有期徒刑四年', 'y': 59}, {'name': '有期徒刑二年六个月', 'y': 64}, {'name': '有期徒刑三年二个月', 'y': 16}, {'name': '有期徒刑十年十一个月', 'y': 1}, {'name': '有期徒刑一年六个月', 'y': 171}, {'name': '有期徒刑一年', 'y': 429}, {'name': '拘役二个月', 'y': 248}, {'name': '有期徒刑六年十个月', 'y': 2}, {'name': '有期徒刑十一个月', 'y': 209}, {'name': '有期徒刑一年三个月', 'y': 81}, {'name': '有期徒刑三年六个月', 'y': 84}, {'name': '有期徒刑五年六个月', 'y': 18}, {'name': '有期徒刑二年十个月', 'y': 18}, {'name': '有期徒刑一年五个月', 'y': 42}, {'name': '有期徒刑十五年', 'y': 12}, {'name': '有期徒刑一年一个月', 'y': 81}, {'name': '有期徒刑十四年', 'y': 12}, {'name': '有期徒刑八年', 'y': 12}, {'name': '有期徒刑三年九个月', 'y': 5}, {'name': '有期徒刑一年四个月', 'y': 64}, {'name': '拘役一个月', 'y': 33}, {'name': '有期徒刑六年', 'y': 49}, {'name': '有期徒刑十二年', 'y': 43}, {'name': '有期徒刑七年六个月', 'y': 8}, {'name': '有期徒刑二年七个月', 'y': 4}, {'name': '有期徒刑二年五个月', 'y': 7}, {'name': '有期徒刑二年一个月', 'y': 8}, {'name': '有期徒刑一年十个月', 'y': 38}, {'name': '有拘役五个月', 'y': 3}, {'name': '有期徒刑二年二个月', 'y': 11}, {'name': '有有期徒刑六个月', 'y': 1}, {'name': '有期徒刑一年九个月', 'y': 16}, {'name': '有期徒刑九年', 'y': 9}, {'name': '有期徒六个月', 'y': 3}, {'name': '有期徒刑四年九个月', 'y': 3}, {'name': '有拘役六个月', 'y': 2}, {'name': '有期徒刑二年四个月', 'y': 16}, {'name': '有期徒刑一年零七个月', 'y': 1}, {'name': '有期徒刑三年七个月', 'y': 5}, {'name': '有期徒刑一年零四个月', 'y': 1}, {'name': '有期徒刑四年四个月', 'y': 5}, {'name': '有期拘役四个月', 'y': 1}, {'name': '有期徒刑4年', 'y': 2}, {'name': '有期徒刑1年', 'y': 1}, {'name': '有期徒刑三年一个月', 'y': 6}, {'name': '拘役四至六个月', 'y': 4}, {'name': '拘役三至五个月', 'y': 1}, {'name': '拘役二至三个月', 'y': 5}, {'name': '有期徒刑三年八个月', 'y': 11}, {'name': '有期徒刑二年三个月', 'y': 15}, {'name': '有期徒刑八年六个月', 'y': 2}, {'name': '有期徒刑六年九个月', 'y': 1}, {'name': '有期徒刑四年十个月', 'y': 6}, {'name': '有期徒刑四年三个月', 'y': 10}, {'name': '有期徒刑二年九个月', 'y': 2}, {'name': '有期徒刑九年六个月', 'y': 3}, {'name': '有期限徒刑六个月', 'y': 1}, {'name': '有期徒三年', 'y': 1}, {'name': '有期徒刑六年六个月', 'y': 4}, {'name': '有期徒刑2年', 'y': 1}, {'name': '有期徒刑七至八个月', 'y': 2}, {'name': '拘四个月', 'y': 1}, {'name': '有期徒刑有期徒刑一年', 'y': 1}, {'name': '有期徒刑八月', 'y': 10}, {'name': '有期徒刑一年零三个月', 'y': 2}, {'name': '拘役七个月', 'y': 1}, {'name': '拘役一至二个月', 'y': 1}, {'name': '有期徒刑二年八个月', 'y': 9}, {'name': '有期徒刑十一年九个月', 'y': 2}, {'name': '有期徒刑十四年六个月', 'y': 8}, {'name': '有期徒刑八至十个月', 'y': 2}, {'name': '有期徒刑三年三个月', 'y': 9}, {'name': '有期徒刑五年四个月', 'y': 1}, {'name': '有期徒刑四年八个月', 'y': 6}, {'name': '有期徒刑三年五个月', 'y': 1}, {'name': '拘役四月', 'y': 1}, {'name': '有期徒刑一年零二个月', 'y': 1}, {'name': '有期徒刑九年八个月', 'y': 1}, {'name': '有期徒刑六年三个月', 'y': 1}, {'name': '有期徒刑十三年二个月', 'y': 2}, {'name': '有期徒刑十七年六个月', 'y': 1}, {'name': '有期徒刑十年四个月', 'y': 1}, {'name': '有期徒刑七年二个月', 'y': 1}, {'name': '有期徒刑四年二个月', 'y': 1}, {'name': '有期徒刑十年七个月', 'y': 1}, {'name': '有期徒刑十年二个月', 'y': 2}, {'name': '有期徒刑六年八个月', 'y': 1}, {'name': '有期徒刑四年十一个月', 'y': 2}, {'name': '有期徒刑十一年三个月', 'y': 1}, {'name': '有期徒刑五年十个月', 'y': 1}, {'name': '有期徒刑五年一个月', 'y': 1}, {'name': '有期徒刑十四年二个月', 'y': 1}, {'name': '有期徒刑六年七个月', 'y': 1}, {'name': '有期徒刑十一年五个月', 'y': 1}, {'name': '有期徒刑五年二个月', 'y': 2}, {'name': '拘役13个月', 'y': 1}, {'name': '拘役十个月', 'y': 2}, {'name': '有期徒刑二年十一个月', 'y': 1}, {'name': '有期徒刑1年6个月', 'y': 1}, {'name': '有期徒刑10年', 'y': 1}, {'name': '有期徒刑六至八个月', 'y': 2}, {'name': '有期徒刑七年零六个月', 'y': 1}, {'name': '有期徒刑十一年十个月', 'y': 2}, {'name': '有期徒刑三年十一个月', 'y': 2}, {'name': '拘役十一个月', 'y': 1}, {'name': '有期徒刑6年', 'y': 1}, {'name': '有期徒刑8个月', 'y': 1}, {'name': '有其徒刑三年六个月', 'y': 1}, {'name': '有期徒刑9年', 'y': 1}, {'name': '有期徒刑九至十个月', 'y': 1}, {'name': '有拘役二个月', 'y': 1}, {'name': '拘役五至六个月', 'y': 1}, {'name': '有期徒刑四年五个月', 'y': 2}, {'name': '有拘役三个月', 'y': 4}, {'name': '有期徒刑三个月', 'y': 1}, {'name': '有期徒刑十二年九个月', 'y': 1}, {'name': '有期徒刑十三年七个月', 'y': 1}, {'name': '有期徒刑五年七个月', 'y': 1}, {'name': '拘役二至四个月', 'y': 1}, {'name': '拘役有期徒刑六个月', 'y': 1}, {'name': '有期徒刑十二年八个月', 'y': 1}, {'name': '有期徒刑十五年三个月', 'y': 1}, {'name': '有期徒十一年四个月', 'y': 1}, {'name': '有期徒刑一年十一个月', 'y': 1}, {'name': '拘役6个月', 'y': 1}, {'name': '有期徒刑7个月', 'y': 1}, {'name': '有期徒刑6个月', 'y': 2}, {'name': '拘拘役三个月', 'y': 1}, {'name': '有期徒刑一年零六个月', 'y': 1}, {'name': '有拘役四个月', 'y': 3}, {'name': '有期徒刑十年十个月', 'y': 1}, {'name': '有期徒十年六个月', 'y': 1}, {'name': '有期徒刑四年一个月', 'y': 1}, {'name': '拘役三至四个月', 'y': 1}], 'DQcasemoney': [{'name': '少于1000元', 'y': 3075}, {'name': '1001元~5000元', 'y': 7329}, {'name': '5001元~10000元', 'y': 1278}, {'name': '10001元~20000元', 'y': 453}, {'name': '20001元~30000元', 'y': 130}, {'name': '30000元以上', 'y': 143}]}
 
 
 

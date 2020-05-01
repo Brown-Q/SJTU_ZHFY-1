@@ -2,7 +2,7 @@
 import re
 from mongoengine import *
 disconnect()
-connect('TOPIC_data', host='127.0.0.1', port=27017)
+connect('TOPIC_data', host='202.121.180.66', port=7101)
 
 class LHJF(Document):
     头部信息=StringField()
@@ -172,6 +172,7 @@ class MsLhjfData:
                 m = re.split('[,，]', plaintiff)
                 n = re.split('[,，]', defendant)
                 for k in m:
+                    print(k)
                     if '年' in k and '月' in k:
                         plaintiff_date = re.findall(r'(\d{4})年', k)
 
@@ -225,7 +226,7 @@ class MsLhjfData:
             elif m == '第四中级':
                 m = '黔江区'
             elif m == '第五中级':
-                pass
+                m = '渝中'
             elif m == '高级':
                 m = '渝北区'
             for j in court.keys():
@@ -354,6 +355,45 @@ class MsLhjfData:
         chart_age_data['defendant_sex'] = MsLhjfData().age_dict_get(age_info[8])#被告性别分布
         return chart_age_data
 
+
+    def get_case_edu_number(self, DQdefendant_info):
+        DQEDU = []
+        c = {
+            '未知': 0,
+            '文盲': 0,
+            '小学文化': 0,
+            '中学文化': 0,
+            '高中文化': 0,
+            '大专文化': 0,
+            '本科文化': 0,
+            '研究生文化': 0,
+        }
+
+        for i in DQdefendant_info:
+            if i['edu'] == '未知':
+                c['未知'] = c['未知'] + 1
+            elif i['edu'] == '文盲':
+                c['文盲'] = c['文盲'] + 1
+            elif i['edu'] in ['小学文化。', '小学文化']:
+                c['小学文化'] = c['小学文化'] + 1
+            elif i['edu'] in ['初中文化。', '初中文化', '中学文化', '中技文化']:
+                c['中学文化'] = c['中学文化'] + 1
+            elif i['edu'] in ['高中文化', '中专文化', '中专文化。', '高中文化。', '职高文化']:
+                c['高中文化'] = c['高中文化'] + 1
+            elif i['edu'] in ['大专文化', '专科文化', '大专文化。']:
+                c['大专文化'] = c['大专文化'] + 1
+            elif i['edu'] in ['大学文化', '本科文化', '本科文化。', '大学文化。', '大学本科文化']:
+                c['本科文化'] = c['本科文化'] + 1
+            elif i['edu'] in ['研究生文化']:
+                c['研究生文化'] = c['研究生文化'] + 1
+        for cl in c:
+            # print(bl)
+            d = {}
+            d['name'] = cl
+            d['y'] = c[cl]
+            DQEDU.append(d)
+        return DQEDU
+
     def get_case_date_number(self):
         case_date_number = {
             '2018': 0,
@@ -390,7 +430,7 @@ plaintiff_sex = {'男': 23608, '女': 61221}
 defendant_sex = {'男': 61336, '女': 23486}
 aj_male = [plaintiff_sex['男'],defendant_sex['男']]
 aj_female = [plaintiff_sex['女'],defendant_sex['女']]
-case_date_number = {'2018': 20149, '2017': 29843, '2016': 27419}
+case_date_number = {'2016': 20149, '2017': 29843, '2018': 27419}
 
 bubble_data = MsLhjfData().get_bubble_data(PLAAGE, DEFAGE)
 
@@ -426,16 +466,16 @@ class OverviewInfo:
         lhjf_pnumber = plaintiff_sex['男'] + plaintiff_sex['女'] + defendant_sex['男'] + defendant_sex['女']
         region_case_number = OverviewInfo().get_his_row_data(map_lhjf_data)
         line_data = OverviewInfo().get_line_data(case_date_number)
-        overview_data = {
+        overview_data_lhjf = {
             'ajnumber': lhjf_ajnumber,
             'pnumber': lhjf_pnumber,
             'map': map_lhjf_data,
             'region_case_number': region_case_number,
             'line_data': line_data,
         }
-        return overview_data
+        return overview_data_lhjf
 
-overview_data = OverviewInfo().get_overview_data()
+overview_data_lhjf = OverviewInfo().get_overview_data()
 
 
 
@@ -468,7 +508,7 @@ class ChartData:
         return [cate, data]
 
     def get_person_info(self):
-        person_info = {}
+        person_info_lhjf = {}
         pie_age_data = ChartData().get_pie_sex_data('当事人性别')
         pie_edu_data = {
             'name': '当事人学历',
@@ -497,15 +537,15 @@ class ChartData:
         }
         his_age_data = ChartData().get_his_age_data()
         his_job_data = [['无业游民', '工人', '自营业主', '教师', '医生', '农民'], [420, 330, 340, 390, 520, 750]]
-        person_info['pie_age_data'] = pie_age_data
-        person_info['pie_edu_data'] = pie_edu_data
-        person_info['his_age_data'] = his_age_data
-        person_info['his_job_data'] = his_job_data
-        return person_info
+        person_info_lhjf['pie_age_data'] = pie_age_data
+        person_info_lhjf['pie_edu_data'] = pie_edu_data
+        person_info_lhjf['his_age_data'] = his_age_data
+        person_info_lhjf['his_job_data'] = his_job_data
+        return person_info_lhjf
 
 
 
-person_info = ChartData().get_person_info()
+person_info_lhjf = ChartData().get_person_info()
 
 
 

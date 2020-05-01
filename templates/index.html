@@ -3,11 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>
-
-        智慧法院项目数据展示平台</title>
+    <title>an awesome web!</title>
     <link rel="stylesheet" href="{% static 'css/semantic.css' %}">
-    <link rel="shortcut icon" type="image/x-icon" href="../static/images/favicon.ico" />
 
 
 </head>
@@ -24,15 +21,7 @@
     <script src = "{% static 'js/grid-light.js' %}"> </script>
 
 		<div class="ui menu" style="height: 8%;" >
-
-
-
-
-            <div class="header item center " style="margin: 0 auto;font-size: 4vh; padding: 0 0">
-                    <div class="container center" style="padding: 0 0; margin: 0 0; line-height: 12px">
-                        <img src="../static/images/FY.jpg" alt="法院" height="100%" width="100%"/>
-                    </div>
-                智慧法院项目数据展示平台
+            <div class="header item center " style="margin: 0 auto;font-size: 4vh">智慧法院项目数据展示平台
 
             </div>
         {% block head %}{% endblock %}
@@ -71,8 +60,10 @@
                   <span class="text">民事专题分析</span>
                   <div class="menu">
                     <a class="item" href="../lhjf">离婚纠纷案件</a>
-                    <a class="item" href="#">未定</a>
-                    <a class="item" href="#">未定</a>
+                    <a class="item" href="../jdjf">借贷纠纷案件</a>
+                    <a class="item" href="../ldhtjf">劳动合同纠纷案件</a>
+                    <a class="item" href="../cpzrjf">产品责任纠纷案件</a>
+                    <a class="item" href="../jcjf">继承纠纷案件</a>
                   </div>
                 </div>
                   <div class="item">
@@ -81,7 +72,7 @@
                   <div class="menu">
                     <a class="item" href="../wxjsz">危险驾驶罪</a>
                     <a class="item" href="../dqz">盗窃罪</a>
-                    <a class="item" href="#">未定</a>
+                    <a class="item" href="../dpz">走私、贩卖、运输毒品罪</a>
                   </div>
                 </div>
                 <div class="item">
@@ -105,13 +96,12 @@
 
               </div>
             </div>
-             <div class="ui basic button" style="background-color:#ffffff" >
+                 <div class="ui basic button" style="background-color:#ffffff" >
                   <a class="item" style="font-weight: bold;font-size: 20px;height: 100%;" href="../tsyp" >
                       <i class="student icon"></i>态势研判</a>
 
 
                     </div>
-
              <div class="ui  basic button" style="background-color:#ffffff" >
               <a class="item" style="font-weight: bold;font-size: 20px;height: 100%;" href="../sjayc" >
                   <i class="bar chart icon"></i>收结案预测</a>

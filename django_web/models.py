@@ -3,8 +3,8 @@ from django.db import models
 from mongoengine import *
 # Create your models here.
 from mongoengine import connect
-
-connect('MS_data', host='127.0.0.1', port=27017)
+disconnect()
+connect('MS_data', host='202.121.180.66', port=7101)
 
 
 class XSAJ(Document):

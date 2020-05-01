@@ -95,8 +95,8 @@ class RangeChartData:
         return hdata, pie_data
 
 #排名数据
-url_result = 'C:\\Users\\WSK\\PycharmProjects\\Django\\data\\tsyp\\result.xls'
-url_data = 'C:\\Users\\WSK\\PycharmProjects\\Django\\data\\tsyp\\data.xls'
+url_result = 'D:\\Django\\data\\tsyp\\result.xls'
+url_data = 'D:\\Django\\data\\tsyp\\data.xls'
 zzx_region, zzx_score = RangeChartData('总排名', url_result).get_region_score1()
 lagl_region, lagl_score = RangeChartData('立案管理排名', url_result).get_region_score()
 spbl_region, spbl_score = RangeChartData('审判办理排名', url_result).get_region_score()
