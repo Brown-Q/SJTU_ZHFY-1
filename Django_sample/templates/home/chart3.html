@@ -1,0 +1,301 @@
+{% extends 'index.html' %}
+{% block head %}
+<div class="item header">行政案件</div>
+
+
+{% endblock %}
+{% block column1 %}
+<div class="ui relaxed centered grid" style="height:150%" >
+<div class="row" style="height: 50%">
+    <div class="column" style="width:19%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" >
+        <div class="ui  container" style="height: 44%;width: 100%;">
+        <div class="ui cen small statistic" style="margin: 12.5% 25%">
+          <div class="value" >
+            {{ CASE_INFO.case_number  }}
+          </div>
+          <div class="label" style="font-size: 20px">
+            案件数量
+          </div>
+        </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="ui  container" style="height: 44%;width: 100%;">
+        <div class="ui cen small statistic" style="margin: 12.5% 25%">
+          <div class="value">
+            {{ CASE_INFO.people_number  }}
+          </div>
+          <div class="label" style="font-size: 20px">
+            当事人数量
+          </div>
+        </div>
+        </div>
+
+    </div>
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart2">
+        案由统计
+
+    </div>
+
+</div>
+
+    <div class="column" style="width:40%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height:102%;background-color: #ffffff" id="chart3"></div>
+</div>
+
+    <div class="column" style="width:40%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart4"></div>
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart5">
+
+    </div>
+</div>
+</div>
+<div class="ui segment container row" style="height:35%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 10%;width: 100%">
+           <span class="ui header " style="height:8%;">热点案件
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px"></div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%"></div>
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width: 50%;padding-left: 6em;line-height: 400%;font-size: 16px;" id="chart11">
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.0 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.0 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.1 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.1 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.2 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.2 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.3 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.3 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.4 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.4 }}</div>
+
+        </div>
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width: 50%;padding-left: 4em;line-height: 400%;font-size: 16px;" id="chart11">
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.5 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.5 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.6 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.6 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.7 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.7 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.8 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.8 }}</div>
+            <div href="javascript:void(0);" onclick="jump('../detail/{{ XZCASE.xzcase_id.9 }}&&{{ CASE_CATE }}')"><i class="file text icon" style="width: 10%;"> 案件难度</i>{{ XZCASE.xzcase_title.9 }}</div>
+        </div>
+
+</div>
+<div class="ui segment container row" style="height:35%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 10%;width: 100%">
+           <span class="ui header " style="height:8%;">重点案由
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px"></div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width: 50%" id="chart11"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width:50%" id="chart12"></div>
+
+</div>
+
+</div>
+
+
+{% endblock %}
+
+{% block jschart %}
+
+<script>
+    function jump(url){
+        window.open(url);
+    }
+        $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', function(mapdata) {
+var data = {{ CASE_INFO.map | safe }};
+
+map1 = new Highcharts.Map('chart3', {
+title: {
+text: '重庆地区案件分布'
+},
+mapNavigation: {
+enabled: true,
+buttonOptions: {
+    verticalAlign: 'bottom'
+}
+},
+credits:{
+enabled:false,
+},
+exporting:{
+enabled:false,
+},
+colorAxis: {
+min: 0,
+minColor: '#fff',
+maxColor: '#006cee',
+labels:{
+    style:{
+        "color":"red","fontWeight":"bold"
+    }
+}
+},
+series: [{
+data: data,
+mapData: mapdata,
+joinBy: 'name',
+name: '重庆市地图'
+}]
+});
+});
+
+    function his_chart(chart_name, chart_data){
+    Highcharts.chart(chart_name,{
+        chart: {
+                type: 'bar'
+                },
+                credits:{
+                        enabled:false
+                },
+                title: {
+                text: '各地区收案情况'
+                },
+
+                exporting:{
+                enabled:false,
+                },
+                legend:{
+                        enabled:false
+                },
+                xAxis: {
+                categories: chart_data[0],
+                title: {
+                text: null
+                }
+                },
+                yAxis: {
+                min: 0,
+                title: {
+                text: '案件数量',
+                align: 'high'
+                },
+
+                },
+
+                plotOptions: {
+                bar: {
+                dataLabels: {
+                    enabled: true,
+                    allowOverlap: true // 允许数据标签重叠
+                }
+                }
+                },
+
+                series: [ {
+                name: '',
+                data: chart_data[1]
+                }]
+                })
+}
+    his_chart('chart4', {{ CASE_INFO.region_case_number | safe }});
+    function line_chart(chart_name, chart_data) {
+    var chart = Highcharts.chart(chart_name, {
+        title: {
+        text: '案件时间趋势'
+        },
+        subtitle: {
+        text: ''
+        },
+    xAxis:{
+           categories:chart_data[0],
+    },
+        yAxis: {
+        title: {
+        text: '案件数量'
+        }
+        },
+        credits:{
+        enabled:false,
+        },
+        exporting:{
+        enabled:false,
+        },
+        legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+        },
+        plotOptions: {
+        series: {
+        label: {
+            connectorAllowed: false
+        },
+
+        }
+        },
+        series: chart_data[1],
+        responsive: {
+        rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+        }]
+        }
+        });
+    }
+    line_chart('chart5', {{ CASE_INFO.date_case_number | safe}});
+    function bubble_chart(chart_name, chart_data){
+        Highcharts.chart(chart_name, {
+                chart: {
+                type: 'packedbubble',
+                },
+                title: {
+                text: '案件案由数量'
+                },
+                tooltip: {
+                useHTML: true,
+                pointFormat: '<b>{point.name}:</b> {point.y}'
+                },
+                plotOptions: {
+                packedbubble: {
+                minSize: '30%',
+                maxSize: '120%',
+                zMin: 0,
+                zMax: 20000,
+                layoutAlgorithm: {
+                    splitSeries: false,
+                    gravitationalConstant: 0.02
+                },
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}',
+                    filter: {
+                        property: 'y',
+                        operator: '>',
+                        value: 0
+                    },
+                    style: {
+                        color: 'black',
+                        textOutline: 'none',
+                        fontWeight: 'normal'
+                    }
+                }
+                }
+                },
+                credits:{
+                enabled:false,
+                },
+                exporting:{
+                enabled:false,
+                },
+                series: chart_data,
+                });
+    }
+    bubble_chart('chart2', {{ AY_INFO |safe }})
+</script>
+
+
+{% endblock %}

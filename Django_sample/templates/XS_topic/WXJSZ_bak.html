@@ -1,0 +1,306 @@
+{% extends 'index.html' %}
+{% block column1 %}
+<div class="ui grid" style="height: 83%;">
+<div class="row">
+   <div class=" column" style="width:30%;">
+
+        <div class="ui grid" >
+            <div class="two column row" >
+            <div class="column">
+                		<div class="ui red segment center aligned" >
+						<div class="ui small statistic" >
+							<div class="value">
+								{{ ajnumber }}
+
+							</div>
+							<div class="label">
+								危险驾驶案件数
+							</div>
+						</div>
+					</div>
+            </div>
+            <div class="column">
+                		<div class="ui red segment center aligned">
+						<div class="ui small statistic">
+							<div class="value">
+								{{ WXJSRS | length}}
+
+							</div>
+							<div class="label">
+								涉案人数
+							</div>
+						</div>
+					</div>
+            </div>
+        </div>
+        </div>
+
+
+            <div class="ui segment container" style="height: 43%">
+                <div class="ui container" id="chart1"  style="height: 100%;">
+
+                </div>
+            </div>
+
+
+            <div class="ui segment container" style="height: 43%">
+                <div class="ui container" id="chart2" style="height: 100%;">
+
+                </div>
+            </div>
+
+
+   </div>
+    <div class="column" style="width: 35%;">
+          <div class="ui segment container" style="height: 50%;">
+              <div class="ui container" id="chart3" style="height: 100%;">
+              </div>
+          </div>
+            <div class="ui segment container" style="height: 50%;">
+              <div class="ui container" id="chart4" style="height: 100%;">
+              </div>
+          </div>
+    </div>
+    <div class="column" style="width: 35%">
+        <div class="ui segment container" id="chart5" style="height: 50%;">
+
+
+
+        </div>
+    <div class="ui segment container"  id="chart6" style="height: 50%;">
+
+
+         </div>
+    </div>
+
+
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block jschart %}
+    <script>
+		 $(function(){
+		 	$('#chart1').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶醉酒驾驶血液酒精含量'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ ALA | safe }}
+                }]
+			});
+		});
+	</script>
+    <script>
+		 $(function(){
+		 	$('#chart2').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶罪性别比例'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ SEX | safe }}
+                }]
+			});
+		});
+	</script>
+
+
+    <script>
+		 $(function(){
+		 	$('#chart3').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                }, credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶罪年龄分布'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ AGE | safe }}
+                }]
+			});
+		});
+	</script>
+    <script>
+		 $(function(){
+		 	$('#chart4').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶罪犯罪学历分布'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ EDU | safe }}
+                }]
+			});
+		});
+	</script>
+    <script>
+		 $(function(){
+		 	$('#chart5').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶罪判刑分析'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ PDATE | safe }}
+                }]
+			});
+		});
+	</script>
+    <script>
+		 $(function(){
+		 	$('#chart6').highcharts({
+				chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                credits:{
+                        enabled:false
+                 },
+                title: {
+                    text: '危险驾驶罪罚款分析'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                series: [{
+                    name: 'percentage',
+                    colorByPoint: true,
+                    data: {{ AJMON | safe }}
+                }]
+			});
+		});
+	</script>
+
+{% endblock %}

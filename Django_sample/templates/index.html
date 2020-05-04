@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>an awesome web!</title>
+    <link rel="stylesheet" href="{% static 'css/semantic.css' %}">
+
+
+</head>
+<body >
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/semantic.js' %}"></script>
+    <script src="{% static 'js/highcharts.js' %}"></script>
+    <script src="{% static 'js/exporting.js' %}"></script>
+{#    <script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>#}
+{#    <script src="{% static 'js/highmaps.js' %}"></script>#}
+    <script src="{% static 'js/drilldown.js' %}"></script>
+    <script src="{% static 'js/highcharts-more.js' %}"></script>
+    <script src="{% static 'js/map.js' %}"></script>
+    <script src = "{% static 'js/grid-light.js' %}"> </script>
+
+		<div class="ui menu" style="height: 8%;" >
+            <div class="header item center " style="margin: 0 auto;font-size: 4vh">智慧法院项目数据展示平台
+
+            </div>
+        {% block head %}{% endblock %}
+        </div>
+         <div class="ui menu" style="height: 60px;">
+            <div class="ui basic dropdown button" id="aa" style="background-color:#ffffff" >
+
+                  <div class="item" style="font-weight: bold;font-size: 20px;height: 100%;"  >
+                       <i class="world icon"></i>案件总览</div>
+{#                  <i class="dropdown icon"></i>#}
+                  <div class="menu">
+                    <div class="item">
+                      <a class="text" href="../overview" style="color: #000000;">案件总览</a>
+                    </div>
+                      <div class="item">
+                      <a class="text" href="../mschart" style="color: #000000">民事案件</a>
+                    </div><div class="item">
+                      <a class="text" href="../xschart" style="color: #000000">刑事案件</a>
+                    </div><div class="item">
+                      <a class="text" href="../xzchart" style="color: #000000">行政案件</a>
+                    </div>
+
+                    </div>
+
+                  </div>
+
+            <div class="ui basic dropdown button" style="background-color:#ffffff">
+
+              <span class="item" style="font-weight: bold;font-size: 20px;height: 100%;" >
+                  <i class="book icon"></i>专题案件</span>
+            {#                  <i class="dropdown icon"></i>#}
+              <div class="menu">
+
+                <div class="item">
+                  <i class="dropdown icon"></i>
+                  <span class="text">民事专题分析</span>
+                  <div class="menu">
+                    <a class="item" href="../lhjf">离婚纠纷案件</a>
+                    <a class="item" href="../jdjf">借贷纠纷案件</a>
+                    <a class="item" href="../ldhtjf">劳动合同纠纷案件</a>
+                    <a class="item" href="../cpzrjf">产品责任纠纷案件</a>
+                    <a class="item" href="../jcjf">继承纠纷案件</a>
+                  </div>
+                </div>
+                  <div class="item">
+                  <i class="dropdown icon"></i>
+                  <span class="text">刑事专题分析</span>
+                  <div class="menu">
+                    <a class="item" href="../wxjsz">危险驾驶罪</a>
+                    <a class="item" href="../dqz">盗窃罪</a>
+                    <a class="item" href="../dpz">走私、贩卖、运输毒品罪</a>
+                  </div>
+                </div>
+                <div class="item">
+                  <i class="dropdown icon"></i>
+                  <span class="text">行政专题分析</span>
+                  <div class="menu">
+                    <a class="item" href="#">无</a>
+                    <a class="item" href="#">无</a>
+                    <a class="item" href="#">未定</a>
+                  </div>
+                </div>
+                  <div class="item">
+                  <i class="dropdown icon"></i>
+                  <span class="text">定制专题分析</span>
+                  <div class="menu">
+                    <a class="item" href="#">无</a>
+                    <a class="item" href="#">无</a>
+                    <a class="item" href="#">未定</a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+                 <div class="ui basic button" style="background-color:#ffffff" >
+                  <a class="item" style="font-weight: bold;font-size: 20px;height: 100%;" href="../tsyp" >
+                      <i class="student icon"></i>态势研判</a>
+
+
+                    </div>
+             <div class="ui  basic button" style="background-color:#ffffff" >
+              <a class="item" style="font-weight: bold;font-size: 20px;height: 100%;" href="../sjayc" >
+                  <i class="bar chart icon"></i>收结案预测</a>
+
+
+                </div>
+            </div>
+         </div>
+
+
+
+
+
+        {% block column1 %}
+
+        {% endblock %}
+{#        {% block column2 %}#}
+{##}
+{#        {% endblock %}#}
+{#        {% block column3 %}#}
+{##}
+{#        {% endblock %}#}
+
+{#	</div>#}
+	<script>
+		$('#menu').click(function () {
+			$('#sidebar').sidebar('push page');
+		});
+	</script>
+<script>
+    {#$('#aa').(function () {#}
+
+        $('.ui.dropdown').dropdown({
+
+        });
+
+</script>
+{% block jschart %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,408 @@
+{% extends 'index.html' %}
+{% block head %}
+<div class="item header">刑事专题案件——盗窃</div>
+
+
+{% endblock %}
+{% block column1 %}
+<div class="ui relaxed centered grid" style="height:200%" >
+<div class="row" style="height: 35%">
+    <div class="column" style="width:19%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" >
+        <div class="ui  container" style="height: 44%;width: 100%;">
+        <div class="ui cen small statistic" style="margin: 12.5% 25%">
+          <div class="value" >
+            {{ F_chart_data.DQpnumber }}
+          </div>
+          <div class="label" style="font-size: 20px">
+            案件数量
+          </div>
+        </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="ui  container" style="height: 44%;width: 100%;">
+        <div class="ui cen small statistic" style="margin: 12.5% 25%">
+          <div class="value">
+            {{ F_chart_data.DQpnumber }}
+          </div>
+          <div class="label" style="font-size: 20px">
+            当事人数量
+          </div>
+        </div>
+        </div>
+
+    </div>
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart2">
+        案由统计
+
+    </div>
+
+</div>
+
+    <div class="column" style="width:40%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height:102%;background-color: #ffffff" id="chart3"></div>
+</div>
+
+    <div class="column" style="width:40%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart4"></div>
+    <div class="ui segment container row" style="height: 50%;background-color: #ffffff" id="chart5">
+
+    </div>
+</div>
+</div>
+<div class="ui segment container row" style="height:40%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 8%;width: 100%">
+           <span class="ui header " style="height:8%;">当事人画像
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px">年龄主要集中在21~30岁，主要职业为无业游民，学历集中在小学学历和中学学历</div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%;margin: 15px 0"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width: 50%;" id="chart6"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width:50%;" id="chart7"></div>
+        <div class="ui divider" style="width: 80%;margin: 15px 0"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width: 50%" id="chart8"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width:50%" id="chart9"></div>
+
+</div>
+<div class="ui segment container row" style="height:40%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 8%;width: 100%">
+           <span class="ui header " style="height:8%;">案件信息分析
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px">根据不同专题设定</div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%;margin: 15px 0"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width: 50%" id="chart10"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width:50%" id="chart11"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width: 50%" id="chart12"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 45%;width:50%" id="chart13"></div>
+
+</div>
+
+</div>
+
+
+{% endblock %}
+
+{% block jschart %}
+    <script>
+    function bubble(chart_name, chart_data){
+        Highcharts.chart(chart_name, {
+            chart: {
+                type: 'packedbubble',
+
+            },
+            title: {
+                text: '案件案由数量'
+            },
+            tooltip: {
+                useHTML: true,
+                pointFormat: '<b>{point.name}:</b> {point.y}'
+            },
+            plotOptions: {
+                packedbubble: {
+                    minSize: '30%',
+                    maxSize: '120%',
+                    zMin: 0,
+                    zMax: 20000,
+                    layoutAlgorithm: {
+                        splitSeries: false,
+                        gravitationalConstant: 0.02
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}',
+                        filter: {
+                            property: 'y',
+                            operator: '>',
+                            value: 1200
+                        },
+                        style: {
+                            color: 'black',
+                            textOutline: 'none',
+                            fontWeight: 'normal'
+                        }
+                    }
+                }
+            },
+                  credits:{
+                enabled:false,
+            },
+            exporting:{
+                enabled:false,
+            },
+            series: chart_data
+
+            });
+    }
+    bubble('chart2', {{ AY_INFO | safe }});
+
+    $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', function(mapdata) {
+        var data = {{ F_chart_data.map_data | safe }};
+
+        map1 = new Highcharts.Map('chart3', {
+            title: {
+                text: '重庆地区案件分布'
+            },
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+              credits:{
+            enabled:false,
+        },
+        exporting:{
+            enabled:false,
+        },
+            colorAxis: {
+                min: 0,
+                minColor: '#fff',
+                maxColor: '#006cee',
+                labels:{
+                    style:{
+                        "color":"red","fontWeight":"bold"
+                    }
+                }
+            },
+            series: [{
+                data: data,
+                mapData: mapdata,
+                joinBy: 'name',
+                name: '重庆市地图'
+            }]
+        });
+        });
+
+    function his_row_chart(chart_name, chart_data){
+        Highcharts.chart(chart_name, {
+            chart: {
+                type: 'bar'
+            },
+            credits:{
+                            enabled:false
+            },
+            title: {
+                text: '各地区收案情况'
+            },
+
+            exporting:{
+                enabled:false,
+            },
+            legend:{
+                            enabled:false
+            },
+            xAxis: {
+                categories: chart_data[0],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '案件数量',
+                    align: 'high'
+                },
+
+            },
+
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true,
+                        allowOverlap: true // 允许数据标签重叠
+                    }
+                }
+            },
+
+            series: [ {
+                name: '数量',
+                data: chart_data[1]
+            }]
+                    });
+    }
+    his_row_chart('chart4', {{ F_chart_data.his_row_data | safe }});
+
+    function line_chart(chart_name, chart_data){
+        var chart = Highcharts.chart(chart_name[0], {
+            title: {
+                text: '案件时间趋势'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis:{
+                categories: chart_data[0]
+            },
+            yAxis: {
+                title: {
+                    text: '案件数量'
+                }
+            },
+                  credits:{
+                enabled:false,
+            },
+            exporting:{
+                enabled:false,
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                }
+            },
+            series: [{
+                name: chart_name[1],
+                data: chart_data[1]
+            }, ],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+            });
+    }
+    line_chart(['chart5', '盗窃案'], {{ F_chart_data.line_data | safe }});
+
+    function pie_chart(chart_name, chart_data){
+        Highcharts.chart(chart_name[0], {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                marginLeft:10,
+            },
+            credits:{
+                enabled:false,
+            },
+            exporting:{
+                enabled:false,
+            },
+            title: {
+                text: chart_name[1]
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            legend: {
+                layout: 'vertical',
+                itemMarginTop: 0,
+                itemMarginBottom: 0,
+                align: 'left',
+                x:100,
+                y:-40,
+                lineHeight:20,
+                maxHeight: 200,
+                marginBottom:200,
+
+		    },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+
+                    showInLegend: {
+                        enabled: true,
+
+                    }
+                }
+            },
+            series: [{
+                name: chart_name[1],
+                colorByPoint: true,
+                data: chart_data,
+            }]
+        });
+    }
+    pie_chart(['chart6', '性别比例'], {{ S_chart_data.DQSEX | safe }});
+    pie_chart(['chart8', '学历比例'], {{ S_chart_data.DQEDU | safe }});
+    pie_chart(['chart10', '罚款分析'], {{ T_chart_data.DQcasemoney | safe }});
+    pie_chart(['chart11', '刑罚分析'], {{ T_chart_data.DQsentence | safe }});
+
+    function his_col_chart(chart_name, chart_data) {
+        var chart = Highcharts.chart(chart_name[0],{
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: chart_name[1]
+            },
+            xAxis: {
+                categories: chart_data[0],
+                crosshair: true
+            },
+            exporting:{
+                enabled:false,
+            },
+            credits:{
+                enabled:false
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '人数'
+                }
+            },
+            tooltip: {
+                // head + 每个 point + footer 拼接成完整的 table
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: '数量',
+                data: chart_data[1]
+            }]
+        });
+    }
+    his_col_chart(['chart7', '年龄分布'], {{ S_chart_data.DQAGE | safe }});
+    his_col_chart(['chart9', '职业分布'], {{ S_chart_data.DQJOB | safe }});
+</script>
+
+
+
+{% endblock %}

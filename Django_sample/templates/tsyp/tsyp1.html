@@ -1,0 +1,382 @@
+{% extends 'index.html' %}
+{% block head %}
+<div class="item header">态势研判</div>
+
+
+{% endblock %}
+{% block column1 %}
+<div class="ui centered grid" style="height:150%" >
+<div class="row" style="height: 45%">
+    <div class="column" style="width:28%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 102%;background-color: #ffffff"   id="chart1" >总质效排名
+    </div>
+
+</div>
+
+    <div class="column" style="width:42%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height:102%;background-color: #ffffff" id="chart2"></div>
+</div>
+
+    <div class="column" style="width:30%;height:100%;background-color: #ffffff">
+    <div class="ui segment container row" style="height: 102%;background-color: #ffffff" id="">
+        <div class="ui container align-center" id="chart3" style="height: 100%;"></div>
+    </div>
+
+</div>
+</div>
+<div class="row" style="height: 40%">
+    <div class="ui segment container column" style="width: 26%;" id="">
+        <div class="ui selection dropdown" style="margin-left: 30%;">地区
+          <input type="hidden" name="地区">
+          <i class="dropdown icon"></i>
+          <div class="default text"><i class="world icon"></i>{{ range_data.1.name | safe}}</div>
+          <div class="menu">
+            <a class="item" href="javascript:void(0);" onclick="chart_paint('chart5',{{ range_data.1 | safe}})"><i class="world icon"></i>立案管理排名</a>
+            <a class="item" href="javascript:void(0);" onclick="chart_paint('chart5',{{ range_data.2 | safe}})"><i class="world icon"></i>审判办理排名</a>
+            <a class="item" href="javascript:void(0);" onclick="chart_paint('chart5',{{ range_data.3 | safe}})"><i class="world icon"></i>结案管理排名</a>
+            <a class="item" href="javascript:void(0);" onclick="chart_paint('chart5',{{ range_data.4 | safe}})"><i class="world icon"></i>XX管理排名</a>
+          </div>
+        </div>
+        <div class="ui container row" style="text-align: center;white-space: pre-wrap;font-size: 20px;line-height: 1.5em">
+{#            具体的排名选择主要分为以下部分：#}
+{#            立案管理排名#}
+{#            审判办理排名#}
+{#            结案管理排名#}
+{#            XX管理排名#}
+
+        </div>
+
+    </div>
+    <div class="ui segment container column" style="width: 72%;"  id="" >
+        <div class="ui container" style="height: 90%;width:80%;margin-top: 2em" id="chart5"></div>
+    </div>
+
+
+</div>
+<div class="ui segment container row" style="height:35%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 10%;width: 100%">
+           <span class="ui header " style="height:8%;">一审指标分析
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px">一审期间，调解率对于服判息诉率有显著提升作用</div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width: 50%" id="chart9"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width:50%" id="chart10"></div>
+
+</div>
+<div class="ui segment container row" style="height:35%;background-color: #ffffff">
+        <div class="ui  container row" style="height: 10%;width: 100%">
+           <span class="ui header " style="height:8%;">结案执行指标分析
+
+            </span>
+            <p></p>
+                <div class="text" style="font-size: 16px">结案管理期间，结案率是促进结案率复合指数最重要的指标，结案率提高对于负荷指数有显著推动作用</div>
+            <p></p>
+
+        </div>
+<div class="ui divider" style="width: 100%"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width: 50%" id="chart11"></div>
+
+        <div class="ui container column" style="background-color: #ffffff;height: 80%;width:50%" id="chart12"></div>
+
+</div>
+</div>
+
+{% endblock %}
+
+{% block jschart %}
+<script>
+    //排名图函数，输入为div的id和作图数据
+    function chart_paint(chart_name, chart_data) {
+              {#console.log(chart_name);#}
+              {#console.log(chart_data);#}
+              var chart = Highcharts.chart(chart_name,{
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: chart_data['name']
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false,
+                    },
+                    xAxis: {
+                        categories: chart_data['region'],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: '得分'
+                        }
+                    },
+                    tooltip: {
+                        // head + 每个 point + footer 拼接成完整的 table
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} 分</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: {
+                            borderWidth: 0
+                        }
+                    },
+                    series: [chart_data['score']]
+                });
+          }
+    function chart_paint_his(chart_name, chart_data) {
+              {#console.log(chart_name);#}
+              {#console.log(chart_data);#}
+              var chart = Highcharts.chart(chart_name,{
+                chart: {
+                    type: 'bar'
+                },
+                credits:{
+                        enabled:false
+                },
+                title: {
+                text: chart_data['name']
+                },
+
+                exporting:{
+                enabled:false,
+                },
+                legend:{
+                        enabled:false
+                },
+                xAxis: {
+                categories: chart_data['region'],
+                title: {
+                text: null
+                }
+                },
+                yAxis: {
+                min: 0,
+                title: {
+                text: '得分',
+                align: 'high'
+                },
+
+                },
+
+                plotOptions: {
+                bar: {
+                dataLabels: {
+                    enabled: true,
+                    allowOverlap: true // 允许数据标签重叠
+                }
+                }
+                },
+
+                series: [ {
+                name: '',
+                data: chart_data['score']['data']
+                }]
+              });
+          }
+    chart_paint_his('chart1', {{ range_data.0 | safe}});
+    chart_paint('chart5', {{ range_data.1 | safe}});
+
+    //饼图函数，输入id和饼图数据
+    function pie_paint(chart_name, chart_data){
+        Highcharts.chart(chart_name, {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        credits:{
+            enabled:false,
+        },
+        exporting:{
+            enabled:false,
+        },
+        title: {
+            text: chart_data['name']
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: '案件数',
+            colorByPoint: true,
+            data: chart_data['data']
+        }]
+    })
+    }
+    function pie_paint1(chart_name, chart_data){
+        Highcharts.chart(chart_name, {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        credits:{
+            enabled:false,
+        },
+        exporting:{
+            enabled:false,
+        },
+        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00',
+                '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4','#058DC7', '#50B432', '#ED561B', '#DDDF00',
+                '#e5b58c', '#afffa8', '#ff939f', '#abfdff', '#6AF9C4'],
+        title: {
+            text: chart_data['name']
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                size:300,
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: '案件数',
+            colorByPoint: true,
+            data: chart_data['data']
+        }]
+    })
+    }
+    pie_paint1('chart3',{{ pie_data.0 | safe }});
+    pie_paint('chart9',{{ pie_data.1 | safe }});
+    pie_paint('chart11',{{ pie_data.2 | safe }});
+    //热力图函数
+    $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', function(mapdata) {
+            var data = {{ map | safe }};
+            map1 = new Highcharts.Map('chart2', {
+                title: {
+                    text: '重庆地区法院质效得分'
+                },
+                mapNavigation: {
+                    enabled: true,
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    }
+                },
+                          credits:{
+                                enabled:false,
+                            },
+                            exporting:{
+                                enabled:false,
+                            },
+                colorAxis: {
+                    min: 70,
+                    minColor: '#fff',
+                    maxColor: '#0087ee',
+                    labels:{
+                        style:{
+                            "color":"red","fontWeight":"bold"
+                        }
+                    }
+                },
+                series: [{
+                    data: data,
+                    mapData: mapdata,
+                    joinBy: 'name',
+                    name: '重庆市地图'
+                }]
+            });
+});
+    //柱状图函数，输入id和柱状图数据
+    function histogram_paint(chart_name, chart_data){
+        var chart = Highcharts.chart(chart_name, {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: chart_data['name']
+                },
+                exporting:{
+                    enabled:false
+                },
+                credits:{
+                    enabled:false
+                },
+                xAxis: {
+                    categories: chart_data['region']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '指数得分'
+                    },
+                    stackLabels: {  // 堆叠数据标签
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold',
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
+                    }
+                },
+                legend: {
+                    align: 'right',
+                    x: -30,
+                    verticalAlign: 'top',
+                    y: 25,
+                    floating: true,
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                    borderColor: '#CCC',
+                    borderWidth: 1,
+                    shadow: false
+                },
+                tooltip: {
+                    formatter: function () {
+                        return '<b>' + this.x + '</b><br/>' +
+                            this.series.name + ': ' + this.y + '<br/>' +
+                            '总分: ' + this.point.stackTotal;
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'normal',
+                        dataLabels: {
+                            enabled: true,
+                            color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                            style: {
+                                // 如果不需要数据标签阴影，可以将 textOutline 设置为 'none'
+                                textOutline: '1px 1px black'
+                            }
+                        }
+                    }
+                },
+                series: chart_data['data']
+            });
+    }
+    histogram_paint('chart10', {{ histogram_data.0 | safe }});
+    histogram_paint('chart12', {{ histogram_data.1 | safe }});
+    //折线图函数
+
+</script>
+{% endblock %}

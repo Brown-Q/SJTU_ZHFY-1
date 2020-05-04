@@ -1,0 +1,366 @@
+{% extends 'index.html' %}
+{% block head %}
+<div class="item header">收结案预测</div>
+
+
+{% endblock %}
+{% block column1 %}
+<div class="ui  centered grid" style="height: 150%;background-color: #ffffff"  >
+    {% block sjayc_date %}
+    <div class="row" style="height: 50%;background-color: #ffffff" >
+        <div class="column" style="width: 42%;height:100%;background-color: #ffffff">
+            <div class="ui container row" style="height: 17%;background-color: #ffffff" id="chart1">
+
+                <div class="ui selection dropdown" style="margin-top: 2.5em;">时间
+                  <input type="hidden" name="时间">
+                  <i class="dropdown icon"></i>
+                  <div class="default text"><i class="calendar icon"></i>{{ date_data.3.date }}</div>
+                  <div class="menu">
+                    <a class="item" href="javascript:void(0);" onclick="functiondate({{ date_data.0 }})"><i class="calendar icon"></i>2016</a>
+                    <a class="item" href="javascript:void(0);" onclick="functiondate({{ date_data.1 }})"><i class="calendar icon"></i>2017</a>
+                    <a class="item" href="javascript:void(0);" onclick="functiondate({{ date_data.2 }})"><i class="calendar icon"></i>2018</a>
+                    <a class="item" href="javascript:void(0);" onclick="functiondate({{ date_data.3 }})"><i class="calendar icon"></i>2019</a>
+                  </div>
+                </div>
+            </div>
+            <div class="ui segment container row" style="height: 40%;background-color: #ffffff" id="chart2"></div>
+            <div class="ui segment container row" style="height: 40%;background-color: #ffffff" id="chart3"></div>
+        </div>
+
+        <div class="column" style="width: 55%;height:100%;background-color: #ffffff">
+            <div class="ui segment container row" style="height: 101%;background-color: #ffffff" id="chart4"></div>
+        </div>
+    </div>
+        <div class="ui divider"></div>
+    {% endblock %}
+
+
+    {% block sjayc_region %}
+        <div class="row" style="height: 4%;background-color: #ffffff;margin-bottom: 0;padding-bottom: 0">
+        <div class="ui container column" style="width:97%;background-color: #ffffff" id="chart5">
+            <div class="ui selection dropdown">地区
+                  <input type="hidden" name="地区">
+                  <i class="dropdown icon"></i>
+                  <div class="default text"><i class="world icon"></i>{{ region_data.3.region }}</div>
+                  <div class="menu">
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.0 }})"><i class="world icon"></i>{{ region_data.0.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.1 }})"><i class="world icon"></i>{{ region_data.1.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.2 }})"><i class="world icon"></i>{{ region_data.2.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.3 }})"><i class="world icon"></i>{{ region_data.3.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.4 }})"><i class="world icon"></i>{{ region_data.4.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.5 }})"><i class="world icon"></i>{{ region_data.5.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.6 }})"><i class="world icon"></i>{{ region_data.6.region }}</a>
+                    <a class="item" href="javascript:void(0);" onclick="functionregion({{ region_data.7 }})"><i class="world icon"></i>{{ region_data.7.region }}</a>
+                  </div>
+                </div>
+        </div>
+    </div>
+
+        <div class="row" style="height: 50%;background-color: #ffffff;margin-top: 0;padding-top: 0.5em" >
+        <div class="ui centered column grid" style="width:29%;background-color: #ffffff">
+            <div class="ui segment container row" style="height: 102%;background-color: #ffffff" id="chart6">
+                <div class="ui  container row" style="height: 5%;width: 100%;margin-bottom: 2em">
+                   <span class="ui header " style="height:10%;font-size: 25px">决策意见</span>
+                </div>
+                <p></p>
+                <div class="header" style="font-size: 18px;height: 10%;">结案管理期间，结案率是促进结案率复合指数最重要的指标，结案率提高对于负荷指数有显著推动作用</div>
+                <div class="ui divider" style="width: 100%"></div>
+                <div class="ui container column" style="background-color: #ffffff;height: 40%;width: 100%" id="chart11">
+                    <div class="ui horizontal small statistic" style="margin: 18% 26%">
+                        <div class="label" style="font-size: 20px;width:200%;margin-right: 2em">
+                        未来收案数
+                      </div>
+                        <p></p>
+                    <div class="value" id="sa">
+
+                      </div>
+                    </div>
+                </div>
+                <div class="ui container column" style="background-color: #ffffff;height: 40%;width:100%" id="chart12">
+                    <div class="ui horizontal small statistic" style="margin: 18% 26%">
+                        <div class="label" style="font-size: 20px;width:200%;margin-right: 2em">
+                        未来结案数
+                      </div>
+                        <p></p>
+                    <div class="value" id="ja" >
+
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column" style="width:68%;background-color: #ffffff">
+            <div class="ui segment container row" style="height: 50%;width: 100%;background-color: #ffffff" id="chart7"></div>
+            <div class="ui segment container row" style="height: 50%;width: 100%;background-color: #ffffff" id="chart8"></div>
+        </div>
+       </div>
+    {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block jschart %}
+    <script>
+    //收结案预测柱状图函数
+    function function1(date_data){
+        {#console.log(date_data['chart_region']);#}
+        var chart = Highcharts.chart('chart2',{
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: date_data['date']+'年重庆各地区收案数'
+                },
+                xAxis: {
+                    categories: date_data['chart_region'],
+                    crosshair: true
+                },
+                exporting:{
+                    enabled:false,
+                },
+                credits:{
+                    enabled:false
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '数量'
+                    }
+                },
+                tooltip: {
+                    // head + 每个 point + footer 拼接成完整的 table
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: '数量',
+                    data: date_data['chart_sa_number']
+                }]
+            });
+    }
+    function function2(date_data) {
+         var chart = Highcharts.chart('chart3',{
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: date_data['date']+'年重庆地区结案数'
+                },
+                xAxis: {
+                    categories: date_data['chart_region'],
+                    crosshair: true
+                },
+                exporting:{
+                    enabled:false,
+                },
+                credits:{
+                    enabled:false
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '指数'
+                    }
+                },
+                tooltip: {
+                    // head + 每个 point + footer 拼接成完整的 table
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: '数量',
+                    data: date_data['chart_ja_number']
+                }]
+            });
+            }
+    //地区折线图函数
+    function function3(region_data){
+        var chart = Highcharts.chart('chart7', {
+                title: {
+                    text: '2016.1~2019.4月'+region_data['region']+'收案数趋势图'
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis:{
+                  categories:region_data['chart_date'],
+                },
+                yAxis: {
+                    title: {
+                        text: '案件数量'
+                    }
+                },
+                      credits:{
+                    enabled:false,
+                },
+                exporting:{
+                    enabled:false,
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        },
+                    }
+                },
+                series: [{
+                    name: '案件数量',
+                    data: region_data['chart_sa_number']
+                }, ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
+    }
+    function function4(region_data){
+        var chart = Highcharts.chart('chart8', {
+                title: {
+                    text: '2016.1~2019.4月'+region_data['region']+'结案数趋势图'
+                },
+                subtitle: {
+                    text: ''
+                },
+                xAxis:{
+                  categories:region_data['chart_date']  ,
+                },
+                yAxis: {
+                    title: {
+                        text: '案件数量'
+                    }
+                },
+                      credits:{
+                    enabled:false,
+                },
+                exporting:{
+                    enabled:false,
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        },
+
+                    }
+                },
+                series: [{
+                    name: '案件数量',
+                    data: region_data['chart_ja_number']
+                }, ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
+    }
+    //预测数后续需要导入真实数据
+    function function5(region_data){
+
+            var x = 10000;
+            var y = 3000;
+            var rand1 = region_data['chart_sa_number'];
+            var rand2 = region_data['chart_ja_number'];
+            {#console.log(region_data['chart_sa_number']);#}
+            $('#sa').html(rand1[rand1.length-1]);
+            $('#ja').html(rand2[rand2.length-1]);
+        }
+    //热力图函数
+    function functiondate(date_data){
+            function1(date_data);
+            function2(date_data);
+            $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', date_data, function(mapdata) {
+                    var data = date_data['map'];
+                    map1 = new Highcharts.Map('chart4', {
+                        title: {
+                            text: date_data['date']+'重庆地区案件数量'
+                        },
+                        mapNavigation: {
+                            enabled: true,
+                            buttonOptions: {
+                                verticalAlign: 'bottom'
+                            }
+                        },
+                                  credits:{
+                                        enabled:false,
+                                    },
+                                    exporting:{
+                                        enabled:false,
+                                    },
+                        colorAxis: {
+                            min: 0,
+                            minColor: '#fff',
+                            maxColor: '#006cee',
+                            labels:{
+                                style:{
+                                    "color":"red","fontWeight":"bold"
+                                }
+                            }
+                        },
+                        series: [{
+                            data: data,
+                            mapData: mapdata,
+                            joinBy: 'name',
+                            name: '重庆市地图'
+                        }]
+                    });
+                });
+        }
+    //单击选项选择展示内容函数
+    function functionregion(region_data){
+            function3(region_data);
+            function4(region_data);
+            function5(region_data);
+        }
+    //初始化展示函数
+    functiondate({{ date_data.3 | safe}});
+    functionregion({{ region_data.3 | safe}});
+    </script>
+{% endblock %}

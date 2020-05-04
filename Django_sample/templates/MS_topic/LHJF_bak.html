@@ -1,0 +1,304 @@
+{% extends 'index.html' %}
+{% block column1 %}
+<div class="ui grid" style="height: 83%;">
+<div class="row">
+   <div class=" column" style="width:30%;">
+
+        <div class="ui grid" >
+            <div class="two column row" >
+            <div class="column">
+                		<div class="ui red segment center aligned" >
+						<div class="ui small statistic" >
+							<div class="value">
+								{{ ajnumber }}
+
+							</div>
+							<div class="label">
+								离婚纠纷案件数
+							</div>
+						</div>
+					</div>
+            </div>
+            <div class="column">
+                		<div class="ui red segment center aligned">
+						<div class="ui small statistic">
+							<div class="value">
+								{{ pnumber }}
+
+							</div>
+							<div class="label">
+								涉案人数
+							</div>
+						</div>
+					</div>
+            </div>
+        </div>
+        </div>
+
+
+            <div class="ui segment container" style="height: 43%;">
+                <div class="ui container" id="chart1"  style="height: 100%;">
+
+                </div>
+            </div>
+
+
+            <div class="ui segment container" style="height: 43%;">
+                <div class="ui container" id="chart2" style="height: 100%;">
+
+                </div>
+            </div>
+
+
+   </div>
+    <div class="column" style="width: 40%;">
+          <div class="ui segment container" style="height:100%;">
+              <div class="ui container" id="chart3" style="height: 100%;">
+              </div>
+          </div>
+
+    </div>
+    <div class="column" style="width: 30%">
+        <div class="ui segment container" id="chart5" style="height: 50%;">
+
+
+
+        </div>
+    <div class="ui segment container"  id="chart6" style="height: 50%;">
+
+
+         </div>
+    </div>
+
+
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block jschart %}
+    <script>
+		 var chart = Highcharts.chart('chart1', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: '原告被告性别统计'
+            },
+            xAxis: {
+                categories: ['原告', '被告']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '人数'
+                }
+            },
+            legend: {
+                /* 图例显示顺序反转
+                 * 这是因为堆叠的顺序默认是反转的，可以设置
+                 * yAxis.reversedStacks = false 来达到类似的效果
+                 */
+                reversed: true
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                name: '男',
+                data: {{ ajmale }}
+            }, {
+                name: '女',
+                data: {{ ajfemale }}
+            }]
+        });
+	</script>
+    <script>
+		 var chart = Highcharts.chart('chart2', {
+            chart: {
+                type: 'bubble',
+                zoomType: 'xy'
+            },
+            title: {
+                text: '年龄分布图'
+            },
+            series: [{
+                name:'原告年龄分布',
+                // 每个气泡包含三个值，x，y，z；其中 x，y用于定位，z 用于计算气泡大小
+                data: {{ bubble }}
+            }, {
+                name:'被告年龄分布',
+                data: {{ bubble_b }}
+            }]
+        });
+	</script>
+
+
+    <script>
+		 var categories = ['20岁以下', '20~30岁', '31~40岁', '41~50岁',
+				  '51~60岁', '61~70岁', '70岁以上'];
+         var chart = Highcharts.chart('chart5', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: '原告年龄分布'
+            },
+            subtitle: {
+                useHTML: true,
+                text: ''
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: false,
+                labels: {
+                    step: 1
+                }
+            }, {
+                // 显示在右侧的镜像 xAxis （通过 linkedTo 与第一个 xAxis 关联）
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function () {
+                        return (Math.abs(this.value) ) ;
+                    }
+                },
+                min: -30000,
+                max:30000
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                        '人口: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                }
+            },
+            series: [{
+                name: '男',
+                data: {{ male_num1 }}
+            }, {
+                name: '女',
+                data: {{ female_num1 }}
+            }]
+        });
+	</script>
+    <script>
+		 var categories = ['20岁以下', '20~30岁', '31~40岁', '41~50岁',
+				  '51~60岁', '61~70岁', '70岁以上'];
+         var chart = Highcharts.chart('chart6', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: '被告年龄分布'
+            },
+            subtitle: {
+                useHTML: true,
+                text: ''
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: false,
+                labels: {
+                    step: 1
+                }
+            }, {
+                // 显示在右侧的镜像 xAxis （通过 linkedTo 与第一个 xAxis 关联）
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function () {
+                        return (Math.abs(this.value) ) ;
+                    }
+                },
+                min: -30000,
+                max:30000
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                        '人口: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                }
+            },
+            series: [{
+                name: '男',
+                data: {{ male_num2 }}
+            }, {
+                name: '女',
+                data: {{ female_num2 }}
+            }],
+        });
+	</script>
+    <script>
+
+            $.getJSON('https://data.jianshukeji.com/jsonp?filename=geochina/chongqing.json&callback=?', function(mapdata) {
+                var data = {{ map | safe }};
+
+                map1 = new Highcharts.Map('chart3', {
+                    title: {
+                        text: '重庆地区离婚纠纷案件分布'
+                    },
+                    mapNavigation: {
+                        enabled: true,
+                        buttonOptions: {
+                            verticalAlign: 'bottom'
+                        }
+                    },
+                    colorAxis: {
+                        min: 0,
+                        minColor: '#fff',
+                        maxColor: '#006cee',
+                        labels:{
+                            style:{
+                                "color":"red","fontWeight":"bold"
+                            }
+                        }
+                    },
+                    series: [{
+                        data: data,
+                        mapData: mapdata,
+                        joinBy: 'name',
+                        name: '重庆市地图'
+                    }]
+                });
+            });
+
+
+
+	</script>
+
+
+{% endblock %}
